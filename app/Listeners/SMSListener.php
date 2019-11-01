@@ -7,15 +7,17 @@ use App\Jobs\SMSSender;
 use Illuminate\Support\Facades\Log;
 
 class SMSListener
-{
+{   
+    protected $logger;
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Log $logger)
     {
         //
+        $this->logger = $logger;
     }
 
     /**
@@ -31,7 +33,7 @@ class SMSListener
         $sms_queue_id = $event->sms_queue_id;
         if(!empty($sms_queue_id)){
             \dispatch(new SMSSender($sms_queue_id));
-            Log::info('Listener - sms_queue_id: '.$sms_queue_id);
+            $this->logger->info('Listener - sms_queue_id: '.$sms_queue_id);
         }
     }
 }

@@ -11,16 +11,20 @@ class SMSSender extends Job
 {
 
     public $sms_queue_id;
+    protected $logger;
+    protected $common;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($sms_queue_id)
+    public function __construct($sms_queue_id, Log $logger, Common $common)
     {
         //        
 
         $this->sms_queue_id = $sms_queue_id;
+        $this->logger = $logger;
+        $this->common = $common;
     }
     
     /**
@@ -31,7 +35,7 @@ class SMSSender extends Job
     public function handle()
     {
         //
-        Log::info('Job - sms_queue_id: '.$this->sms_queue_id);
+        $this->logger->info('Job - sms_queue_id: '.$this->sms_queue_id);
         $data = [];
         $uid;
         $queuerecord = SMSQueueModel::find(['queue_id' => $this->sms_queue_id])->first();
@@ -102,7 +106,7 @@ class SMSSender extends Job
 
         $smslog->save();
 
-        $request = Common::curl_request($callback, $data);
+        $request = $this->common->curl_request($callback, $data);
 
         \dd($request);
 
@@ -111,8 +115,8 @@ class SMSSender extends Job
     function is_english($str) {
         if (strlen($str) != strlen(utf8_decode($str))) {
             return false;
-        } else {
-            return true;
         }
+            return true;
+        
     }
 }
