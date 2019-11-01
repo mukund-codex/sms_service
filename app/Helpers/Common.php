@@ -39,13 +39,11 @@ class Common{
         $response = curl_exec($curl);
         $err = curl_error($curl);
 
-        \dd($response);exit;
-
         curl_close($curl);
 
         if ($err) {
             echo "cURL Error #:" . $err;
-        } else {
+        }else {
             print_r(json_decode($response));
         }
 

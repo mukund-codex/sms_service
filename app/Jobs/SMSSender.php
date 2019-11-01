@@ -11,20 +11,16 @@ class SMSSender extends Job
 {
 
     public $sms_queue_id;
-    protected $logger;
-    protected $common;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($sms_queue_id, Log $logger, Common $common)
+    public function __construct($sms_queue_id)
     {
         //        
 
         $this->sms_queue_id = $sms_queue_id;
-        $this->logger = $logger;
-        $this->common = $common;
     }
     
     /**
@@ -35,7 +31,7 @@ class SMSSender extends Job
     public function handle()
     {
         //
-        $this->logger->info('Job - sms_queue_id: '.$this->sms_queue_id);
+        Log::info('Job - sms_queue_id: '.$this->sms_queue_id);
         $data = [];
         $uid;
         $queuerecord = SMSQueueModel::find(['queue_id' => $this->sms_queue_id])->first();
@@ -106,7 +102,7 @@ class SMSSender extends Job
 
         $smslog->save();
 
-        $request = $this->common->curl_request($callback, $data);
+        $request = Common::curl_request($callback, $data);
 
         \dd($request);
 
