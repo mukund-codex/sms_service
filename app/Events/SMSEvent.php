@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\SMSModel;
+use Illuminate\Support\Facades\Log;
 
 class SMSEvent extends Event
 {   
@@ -18,5 +19,6 @@ class SMSEvent extends Event
     {
         //
         $this->sms_queue_id = $sms_queue_id;
+        Log::info('SMS Queue ID : '.$this->sms_queue_id);
     }
 }

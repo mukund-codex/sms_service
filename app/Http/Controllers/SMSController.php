@@ -23,15 +23,16 @@ class SMSController extends Controller
     public function index(Request $request)
     {
         //
-        
+        $request_id = $this->random_num(12);
+
+        $validation = $this->validation($request, $request_id);
+
         $uid = $request->input('uid');
         $to = $request->input('to');
         $message = $request->input('message');
         $sender_id = $request->input('sender_id');
         $provider = $request->input('provider');
         $callback = $request->input('callback');
-        
-        $request_id = $this->random_num(12);
         
         $sms = new SMSModel();
         
@@ -41,63 +42,8 @@ class SMSController extends Controller
         $sms->message = $message;
         $sms->provider = $provider;
         $sms->sender_id = $sender_id;
-        $sms->callback = $callback;
-
-        if(empty($to)){
-            $sms->status = 'fail';
-            $sms->error = 'Empty Mobile Number';
-
-            $sms->save();
-
-            return response()->json(['status' => 'Fail', 'message' => 'Empty Mobile Number', 'data' => ['request_id' => $request_id, 'uid' => $uid] ]);
-        }
-
-        if(empty($message)){
-            $sms->status = 'fail';
-            $sms->error = 'Empty Message';
-
-            $sms->save();
-
-            return response()->json(['status' => 'Fail', 'message' => 'Empty Message', 'data' => ['request_id' => $request_id, 'uid' => $uid] ]);
-        }
-
-        if(empty($sender_id)){
-            $sms->status = 'fail';
-            $sms->error = 'Empty Sender ID';
-
-            $sms->save();
-
-            return response()->json(['status' => 'Fail', 'message' => 'Empty Sender ID', 'data' => ['request_id' => $request_id, 'uid' => $uid] ]);
-        }
-
-        if(empty($provider)){
-            $sms->status = 'fail';
-            $sms->error = 'Empty Provider';
-
-            $sms->save();
-
-            return response()->json(['status' => 'Fail', 'message' => 'Empty Provider', 'data' => ['request_id' => $request_id, 'uid' => $uid] ]);
-        }
-
-        if(empty($callback)){
-            $sms->status = 'fail';
-            $sms->error = 'Empty Callback URI';
-
-            $sms->save();
-
-            return response()->json(['status' => 'Fail', 'message' => 'Empty Callback URI', 'data' => ['request_id' => $request_id, 'uid' => $uid] ]);
-        }
-
-        if(!\preg_match('/^[7-9]{1}[0-9]{9}$/', $to)){
-            $sms->status = 'fail';
-            $sms->error = 'Invalid Mobile Number';
-
-            $sms->save();
-
-            return response()->json(['status' => 'Fail', 'message' => 'Invalid Mobile Number', 'data' => ['request_id' => $request_id, 'uid' => $uid] ]);
-        }
-
-        $sms->status = 'success';
+        $sms->callback = $callback;        
+        $sms->status = json_encode($validation);
 
         $sms->save();
         
@@ -111,10 +57,30 @@ class SMSController extends Controller
         $smsQueue->callback = $callback;
         
         $smsQueue->save();
-
+        
         //\dd($smsQueue);
         event(new SMSEvent($smsQueue->queue_id));
         //\dispatch(new SMSSender($smsQueue->queue_id));
+
+    }
+
+    public function validation($request, $request_id){
+
+        //
+        $validator = Validator::make($request->all(), [
+            'uid' => 'required',
+            'to' => 'required|numeric',
+            'message' => 'required',
+            'sender_id' => 'required',
+            'provider' => 'required',
+            'callback' => 'required',
+        ]);
+        
+        $errors = $validator->errors()->messages();
+        
+        $status = empty($errors) ? 'Success' : 'Fail';
+
+        return response()->json(['status' => $status, 'message' => $errors, 'data' => ['request_id' => $request_id]]);
 
     }
 
