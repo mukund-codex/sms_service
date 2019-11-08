@@ -15,7 +15,7 @@ class SmsQueue extends Migration
     {
         //
         Schema::create('sms_queue', function(Blueprint $table){
-            $table->integer('queue_id')->autoIncrement();
+            $table->bigIncrements('queue_id');
             $table->string('uid');
             $table->string('request_id');
             $table->string('to');
