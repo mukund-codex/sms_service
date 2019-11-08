@@ -26,7 +26,7 @@ class SmsLog extends Migration
             $table->string('is_success');
             $table->string('output');
             $table->timestamps();
-        });
+         });
     }
 
     /**
@@ -37,6 +37,5 @@ class SmsLog extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('sms_log');
     }
 }

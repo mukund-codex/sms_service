@@ -14,8 +14,8 @@ class SmsRequestLog extends Migration
     public function up()
     {
         //
-        Schema:;create('sms_request_log', function(Blueprint $table){
-            $table->bigIncrements('id');
+        Schema::create('sms_request_log', function(Blueprint $table){
+            $table->integer('id')->autoIncrement();
             $table->string('uid');
             $table->string('request_id');
             $table->string('to');
