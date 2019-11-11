@@ -23,8 +23,8 @@ class SmsRequestLog extends Migration
             $table->string('sender_id');
             $table->string('provider');
             $table->string('callback');
-            $table->string('status');
-            $table->string('error');
+            $table->jsonb('status')->nullable();
+            $table->jsonb('error')->nullable();
             $table->timestamps();
         });
     }
