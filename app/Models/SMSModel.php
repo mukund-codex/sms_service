@@ -11,5 +11,5 @@ class SMSModel extends Model
     //
     protected $primaryKey = 'id';
     protected $table = 'sms_request_log';
-    protected $fillable = ['uid', 'to', 'message', 'sender_id', 'provider', 'callback', 'status'];
+    protected $fillable = ['uid', 'request_id', 'to', 'message', 'sender_id', 'provider', 'callback', 'status'];
 }
